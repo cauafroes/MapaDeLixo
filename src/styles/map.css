@@ -1,0 +1,9 @@
+/* Hide the default tile layer (roads and avenues) */
+.leaflet-container .leaflet-pane .tile-pane {
+  display: none;
+}
+
+/* Hide the default markers */
+.leaflet-container .leaflet-pane .marker-pane {
+  display: none;
+}
