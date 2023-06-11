@@ -18,7 +18,9 @@ const Navbar = () => {
         </Link>
       </div>
       <div className="flex items-center justify-center w-1/4">
-        <BsPlusLg className="text-3xl" />
+        <Link to="/report">
+          <BsPlusLg className="text-3xl" />
+        </Link>
       </div>
       <div className="flex items-center justify-center w-1/4">
         <BsCamera className="text-3xl" />
