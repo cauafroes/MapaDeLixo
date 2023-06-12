@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, ChangeEvent } from "react";
 import Switch from "react-switch";
 import api from "./api/api";
 
@@ -13,6 +13,7 @@ interface FormData {
 
 export default function SendReport() {
   const [automaticGPS, setAutomaticGPS] = useState(false);
+  const [value, setValue] = useState(0); // Set do Input Range
   const [data, setData] = useState<FormData>({
     name: "",
     desc: "",
@@ -21,6 +22,19 @@ export default function SendReport() {
     gps_long: null,
     image: null,
   });
+  // Funções do Input Range
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setValue(Number(event.target.value));
+  };
+  const getRangeColor = () => {
+    if (value < 3) {
+      return 'bg-red-500';
+    } else if (value < 6) {
+      return 'bg-yellow-500';
+    } else {
+      return 'bg-green-500';
+    }
+  };
 
   const handleSwitchChange = (checked: boolean) => {
     if (checked === true) fetchUserLocation();
@@ -107,7 +121,7 @@ export default function SendReport() {
         <h1 className="text-2xl font-bold mb-4">Reportar lixo</h1>
         <form onSubmit={handleSubmit}>
           <label className="block mb-2">
-            Nome da coisa:
+            Data:
             <input
               type="text"
               name="name"
@@ -159,7 +173,7 @@ export default function SendReport() {
               />
             </label>
           )}
-          <label className="flex items-center justify-between mb-2 text-slate-400">
+          <label className="flex items-center justify-between mb-1 text-slate-400">
             Usar localização automática
             <Switch
               height={17}
@@ -169,7 +183,7 @@ export default function SendReport() {
               checked={automaticGPS}
             />
           </label>
-          <label className="block mb-2 pt-7">
+          <label className="block mb-1 pt-1">
             Selecione uma imagem:
             <input
               type="file"
@@ -179,11 +193,25 @@ export default function SendReport() {
               className="border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </label>
+          <label htmlFor="rangeInput" className="flex mb-1 justify-between items-center">
+            <span>0</span>
+            <span>10</span>
+          </label>
+            <input
+            id="rangeInput" 
+            type="range"
+            min="0" 
+            max="10"
+            value={value}
+            onChange={handleInputChange}
+            className={`w-full h-8 rounded-md transition-colors ${getRangeColor()}`}
+            />
+          
           <button
             type="submit"
-            className="bg-blue-500 mt-5 text-white py-4 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+            className="bg-blue-500 mt-3 text-white py-4 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
           >
-            Submit
+            Cadastrar
           </button>
         </form>
       </div>
