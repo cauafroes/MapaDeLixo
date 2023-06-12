@@ -123,11 +123,11 @@ export default function SendReport() {
           <label className="block mb-2">
             Data:
             <input
-              type="text"
+              type="date"
               name="name"
               value={data.name}
               onChange={handleChange}
-              className="border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="border border-gray-300 rounded px-2 py-1 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </label>
           <label className="block mb-2">
@@ -148,7 +148,7 @@ export default function SendReport() {
                   name="gps_lat"
                   value={data.gps_lat || ""}
                   onChange={handleChange}
-                  className="border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="border border-gray-300 rounded px-2 py-1 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </label>
               <label className="block mb-2">
@@ -158,7 +158,7 @@ export default function SendReport() {
                   name="gps_long"
                   value={data.gps_long || ""}
                   onChange={handleChange}
-                  className="border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="border border-gray-300 rounded px-2 py-1 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </label>
             </>
@@ -169,7 +169,7 @@ export default function SendReport() {
                 name="cep"
                 value={data.cep || ""}
                 onChange={handleChange}
-                className="border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="border border-gray-300 rounded px-2 py-1 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </label>
           )}
@@ -190,7 +190,16 @@ export default function SendReport() {
               accept="image/*"
               name="image"
               onChange={handleChange}
-              className="border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="
+                file:bg-gradient-to-b file:from-blue-400 file:to-blue-500
+                file:text-xs
+                file:px-6 file:py-3 file:m-5
+                file:border-none
+                file:rounded-full
+                file:text-white
+
+                w-full px-1 mt-3 text-xs text-gray bg-blue-300 rounded-full text-white
+              "
             />
           </label>
           <label htmlFor="rangeInput" className="flex mb-1 justify-between items-center">
