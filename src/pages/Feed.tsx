@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import FeedCard, { IObj } from "../components/FeedCard";
 import Navbar from "../components/Navbar";
 
-import api from "../components/api/api";
+import api from "../services/api";
 
 const Feed = () => {
   const [arr, setArr] = useState([]);

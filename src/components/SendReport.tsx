@@ -1,7 +1,7 @@
 import { useState, ChangeEvent } from "react";
 import Switch from "react-switch";
 import Slider from "@mui/material/Slider";
-import api from "./api/api";
+import api from "../services/api";
 
 interface FormData {
   name: string;
@@ -16,6 +16,7 @@ export default function SendReport() {
   const [automaticGPS, setAutomaticGPS] = useState(false);
   const [value, setValue] = useState(0); // Set do Input Range
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [step, setStep] = useState(1); // Set da página
   const [red, setRed] = useState(255);
   const [green, setGreen] = useState(200);
   const [data, setData] = useState<FormData>({
@@ -26,19 +27,6 @@ export default function SendReport() {
     gps_long: null,
     image: null,
   });
-  // Funções do Input Range
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setValue(Number(event.target.value));
-  };
-  const getRangeColor = () => {
-    if (value < 3) {
-      return "bg-red-500";
-    } else if (value < 6) {
-      return "bg-yellow-500";
-    } else {
-      return "bg-green-500";
-    }
-  };
 
   const handleSwitchChange = (checked: boolean) => {
     if (checked === true) fetchUserLocation();
@@ -63,7 +51,7 @@ export default function SendReport() {
         }
       );
     } else {
-      console.log("Geolocation is not supported by this browser.");
+      console.log("Este navegador não suporta Geolocalização.");
     }
   };
 
@@ -76,6 +64,7 @@ export default function SendReport() {
     formData.append("cep", data.cep);
     formData.append("gps_lat", String(data.gps_lat));
     formData.append("gps_long", String(data.gps_long));
+    formData.append("amount_trash", String(value));
     if (selectedFile) {
       formData.append("image", selectedFile);
     }
@@ -127,7 +116,8 @@ export default function SendReport() {
     }
   };
 
-  const handleSliderChange = (event: any, value: any) => {
+  const handleSliderChange = (event: any, value: number) => {
+    setValue(value);
     const normalizedValue = value / 10;
     const updatedRed = Math.round(normalizedValue + 1 * 200);
     const updatedGreen = Math.round((1 - normalizedValue) * 200);
@@ -136,16 +126,34 @@ export default function SendReport() {
     setGreen(updatedGreen);
   };
 
-  const colorStyle = {
-    width: 300,
-    color: `rgb(${red}, ${green}, 60)`,
-  };
-
   return (
     <>
-      <div className="max-w-md p-7 mb-28 mx-auto">
-        <h1 className="text-2xl font-bold mb-4">Reportar lixo</h1>
-        <form onSubmit={handleSubmit}>
+    <div className="max-w-md p-7 mb-28 mx-auto">
+      <h1 className="text-2xl font-bold">Reportar lixo</h1>
+      <form onSubmit={handleSubmit} className="leading-9 mt-6">
+      {
+        step === 1 ? 
+        <>
+        <label className="block mb-1 pt-1">
+            Selecione uma imagem:
+            <input
+              type="file"
+              accept="image/*"
+              name="image"
+              onChange={handleFileChange}
+              
+              className="
+                file:bg-gradient-to-b file:from-blue-400 file:to-blue-500
+                file:text-xs
+                file:px-6 file:py-3 file:m-5
+                file:border-none
+                file:rounded-xl
+                file:text-white
+
+                w-full px-1 mt-3 text-xs text-gray bg-blue-300 rounded-xl text-white pr-4
+              "
+            />
+          </label>
           <label className="block mb-2">
             Nome:
             <input
@@ -166,16 +174,31 @@ export default function SendReport() {
               className="border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </label>
-          <label className="flex items-center mt-5 mb-5 justify-between bg-blue-400 p-4 rounded-xl text-white">
-            Usar minha localização
-            <Switch
-              height={17}
-              width={35}
-              handleDiameter={25}
-              onChange={handleSwitchChange}
-              checked={automaticGPS}
-            />
+        </>
+        : <>
+        <div className="text-center">
+          <p>Quantidade de Lixo</p>
+          </div>
+          <label
+            htmlFor="rangeInput"
+            className="flex mb-1 justify-between items-center"
+          >
+            <span>0</span>
+            <span>10</span>
           </label>
+
+          <Slider
+            defaultValue={2}
+            min={0}
+            max={10}
+            sx={{
+              color: `rgb(${red}, ${green}, 60)`,
+            }}
+            onChange={handleSliderChange}
+            valueLabelDisplay="auto"
+            step={1}
+            marks
+          />
           {automaticGPS ? (
             <>
               <label className="block mb-2">
@@ -211,58 +234,28 @@ export default function SendReport() {
               />
             </label>
           )}
-          <label className="block mb-1 pt-1">
-            Selecione uma imagem:
-            <input
-              type="file"
-              accept="image/*"
-              name="image"
-              onChange={handleFileChange}
-              className="
-                file:bg-gradient-to-b file:from-blue-400 file:to-blue-500
-                file:text-xs
-                file:px-6 file:py-3 file:m-5
-                file:border-none
-                file:rounded-full
-                file:text-white
-
-                w-full px-1 mt-3 text-xs text-gray bg-blue-300 rounded-full text-white
-              "
+          <label className="flex items-center mt-5 mb-5 justify-between bg-blue-400 p-4 rounded-xl text-white">
+            Usar minha localização
+            <Switch
+              height={17}
+              width={35}
+              handleDiameter={25}
+              onChange={handleSwitchChange}
+              checked={automaticGPS}
             />
           </label>
-          <p>Quantidade de Lixo</p>
-          <label
-            htmlFor="rangeInput"
-            className="flex mb-1 justify-between items-center"
-          >
-            <span>0</span>
-            <span>10</span>
-          </label>
-          <input
-            id="rangeInput"
-            type="range"
-            min="0"
-            max="10"
-            value={value}
-            onChange={handleInputChange}
-            className={`w-full h-8 rounded-md transition-colors ${getRangeColor()}`}
-          />
-          <Slider
-            defaultValue={2}
-            min={0}
-            max={10}
-            sx={colorStyle}
-            onChange={handleSliderChange}
-            valueLabelDisplay="auto"
-            step={1}
-            marks
-          />
+          
+         
           <button
             type="submit"
-            className="bg-blue-500 mt-3 text-white py-4 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+            className="bg-blue-500 mt-7 text-white py-4 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
           >
             Cadastrar
           </button>
+          </>
+      }
+          
+          
         </form>
       </div>
     </>
