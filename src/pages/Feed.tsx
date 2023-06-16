@@ -5,13 +5,15 @@ import Navbar from "../components/Navbar";
 import api from "../services/api";
 
 const Feed = () => {
-  const [arr, setArr] = useState([]);
+  const [arr, setArr] = useState([1, 2, 3]);
+  const [loading, setLoading] = useState(true);
 
   async function getFeed() {
     await api
       .get("/reports")
       .then((res) => {
         setArr(res.data.data);
+        setLoading(false);
       })
       .catch((e) => console.log(e));
   }
@@ -23,17 +25,12 @@ const Feed = () => {
   return (
     <>
       <div className="flex flex-col items-center justify-center mb-32">
-        {arr.length > 0 ? (
-          arr.map((obj: IObj, index: number) => (
-            <FeedCard key={index} obj={obj} />
-          ))
-        ) : (
-          <div className=" w-full h-1/3 mt-44 p-8 rounded-sm">
-            <p className="text-center text-4xl">
-              Nenhuma irregularidade reportada
-            </p>
-          </div>
-        )}
+        {arr.length > 0 && !loading
+          ? arr.map((obj: IObj, index: number) => (
+              <FeedCard obj={obj} key={index} />
+            ))
+          : arr.map((index: number) => <FeedCard key={index} />)}
+
         <Navbar />
       </div>
     </>

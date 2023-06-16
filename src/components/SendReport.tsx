@@ -116,7 +116,7 @@ export default function SendReport() {
     }
   };
 
-  const handleSliderChange = (event: any, value: number) => {
+  const handleSliderChange = (event: any, value: any) => {
     setValue(value);
     const normalizedValue = value / 10;
     const updatedRed = Math.round(normalizedValue + 1 * 200);
@@ -128,20 +128,16 @@ export default function SendReport() {
 
   return (
     <>
-    <div className="max-w-md p-7 mb-28 mx-auto">
-      <h1 className="text-2xl font-bold">Reportar lixo</h1>
-      <form onSubmit={handleSubmit} className="leading-9 mt-6">
-      {
-        step === 1 ? 
-        <>
-        <label className="block mb-1 pt-1">
+      <div className="max-w-md p-7 mb-28 mx-auto">
+        <h1 className="text-2xl font-bold">Reportar lixo</h1>
+        <form onSubmit={handleSubmit} className="leading-9 mt-6">
+          <label className="block mb-1 pt-1">
             Selecione uma imagem:
             <input
               type="file"
               accept="image/*"
               name="image"
               onChange={handleFileChange}
-              
               className="
                 file:bg-gradient-to-b file:from-blue-400 file:to-blue-500
                 file:text-xs
@@ -174,10 +170,8 @@ export default function SendReport() {
               className="border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </label>
-        </>
-        : <>
-        <div className="text-center">
-          <p>Quantidade de Lixo</p>
+          <div className="text-center">
+            <p>Quantidade de Lixo</p>
           </div>
           <label
             htmlFor="rangeInput"
@@ -244,18 +238,12 @@ export default function SendReport() {
               checked={automaticGPS}
             />
           </label>
-          
-         
           <button
             type="submit"
             className="bg-blue-500 mt-7 text-white py-4 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
           >
             Cadastrar
           </button>
-          </>
-      }
-          
-          
         </form>
       </div>
     </>
