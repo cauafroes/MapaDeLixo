@@ -2,6 +2,7 @@ import { useState, ChangeEvent } from "react";
 import Switch from "react-switch";
 import Slider from "@mui/material/Slider";
 import api from "../services/api";
+// import { redirect } from "react-router-dom";
 
 interface FormData {
   name: string;
@@ -16,7 +17,6 @@ export default function SendReport() {
   const [automaticGPS, setAutomaticGPS] = useState(false);
   const [value, setValue] = useState(0); // Set do Input Range
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [step, setStep] = useState(1); // Set da página
   const [red, setRed] = useState(255);
   const [green, setGreen] = useState(200);
   const [data, setData] = useState<FormData>({
@@ -64,19 +64,22 @@ export default function SendReport() {
     formData.append("cep", data.cep);
     formData.append("gps_lat", String(data.gps_lat));
     formData.append("gps_long", String(data.gps_long));
-    formData.append("amount_trash", String(value));
+    formData.append("trash_amount", String(value));
     if (selectedFile) {
       formData.append("image", selectedFile);
     }
-    try {
-      const response = await api.post("/reports", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data;",
-        },
-      });
-      console.log(response.data);
-    } catch (error: any) {
-      alert(JSON.stringify(error.response.data.message));
+    const response = await api.post("/reports", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data;",
+      },
+    });
+    // .then((response) => {
+    //   console.log(response.data)
+    // });
+    console.log(response.data.type);
+    if(response.data.type) {
+      // return redirect("/");
+      alert("Report criado com sucesso!");
     }
   };
 
@@ -116,7 +119,7 @@ export default function SendReport() {
     }
   };
 
-  const handleSliderChange = (event: any, value: any) => {
+  const handleSliderChange = (value: any) => {
     setValue(value);
     const normalizedValue = value / 10;
     const updatedRed = Math.round(normalizedValue + 1 * 200);

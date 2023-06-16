@@ -5,7 +5,7 @@ import Navbar from "../components/Navbar";
 import api from "../services/api";
 
 const Feed = () => {
-  const [arr, setArr] = useState([1, 2, 3]);
+  const [arr, setArr] = useState<IObj[]>([]);
   const [loading, setLoading] = useState(true);
 
   async function getFeed() {
@@ -25,11 +25,15 @@ const Feed = () => {
   return (
     <>
       <div className="flex flex-col items-center justify-center mb-32">
-        {arr.length > 0 && !loading
-          ? arr.map((obj: IObj, index: number) => (
-              <FeedCard obj={obj} key={index} />
+        {arr.length > 1 && !loading ? 
+        arr.map((obj: IObj, index: number) => (
+              <FeedCard key={index} obj={obj} />
             ))
-          : arr.map((index: number) => <FeedCard key={index} />)}
+          : <>
+          <FeedCard />
+          <FeedCard />
+          <FeedCard />
+          </> }
 
         <Navbar />
       </div>
