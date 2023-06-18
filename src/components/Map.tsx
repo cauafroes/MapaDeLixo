@@ -10,10 +10,6 @@ type Place = {
   gps_long: number;
 };
 
-export type MapProps = {
-  places?: Place[];
-};
-
 const marketIcon = new L.Icon({
   iconUrl:
     "https://th.bing.com/th/id/R.c1d171888c0f59f4f45e2569406d938e?rik=uCyFb1bVsv9Yvg&pid=ImgRaw&r=0",
@@ -22,7 +18,8 @@ const marketIcon = new L.Icon({
   popupAnchor: [0, -40],
 });
 
-const Map = ({ places }: MapProps) => {
+// const Map = ({ places }: MapProps) => {
+const Map = () => {
   const [arr, setArr] = useState<Place[]>([]);
 
   async function getFeed() {
