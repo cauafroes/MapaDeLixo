@@ -1,5 +1,6 @@
 import { BsFillCaretDownFill } from "react-icons/bs";
 import { BsFillPersonFill } from "react-icons/bs";
+import { BsFillCaretUpFill } from "react-icons/bs";
 
 import Navbar from "../components/Navbar";
 import { useLocation } from "react-router-dom";
@@ -72,12 +73,12 @@ const FeedCardOpen = () => {
           Descrição
         </h3>
         <button
-          className="p-0 px-2 bg-transparent w-0 font-bold text-green-800"
+          className="p-0 px-2 bg-transparent w-0 font-bold text-gray-500"
           onClick={() => {
             setDescription(!description);
           }}
         >
-          <BsFillCaretDownFill />
+          {description ? <BsFillCaretUpFill /> : <BsFillCaretDownFill />}
         </button>
       </div>
       {description && (
@@ -92,12 +93,12 @@ const FeedCardOpen = () => {
           Comentários
         </h3>
         <button
-          className="p-0 px-2 bg-transparent w-0 font-bold text-green-800"
+          className="p-0 px-2 bg-transparent w-0 font-bold text-gray-500"
           onClick={() => {
             setComments(!comments);
           }}
         >
-          <BsFillCaretDownFill />
+          {comments ? <BsFillCaretUpFill /> : <BsFillCaretDownFill />}
         </button>
       </div>
 
