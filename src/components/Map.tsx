@@ -1,5 +1,6 @@
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import "../styles/map.css";
+import L from "leaflet"
 
 type Place = {
   id: string;
@@ -12,6 +13,13 @@ type Place = {
 export type MapProps = {
   places?: Place[];
 };
+
+const marketIcon = new L.Icon({
+  iconUrl: 'https://th.bing.com/th/id/R.c1d171888c0f59f4f45e2569406d938e?rik=uCyFb1bVsv9Yvg&pid=ImgRaw&r=0',
+  iconSize: [40, 40],
+  iconAnchor: [20,20],
+  popupAnchor: [0, -40]
+})
 
 const Map = ({ places }: MapProps) => {
   return (
@@ -27,7 +35,7 @@ const Map = ({ places }: MapProps) => {
         {places?.map(({ id, location }) => {
           const { latitude, longitude } = location;
 
-          return <Marker key={`place-${id}`} position={[latitude, longitude]} />;
+          return <Marker key={`place-${id}`} position={[latitude, longitude]} icon={marketIcon} />;
         })}
       </MapContainer>
     </div>
