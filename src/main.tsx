@@ -6,6 +6,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 import Feed from "./pages/Feed.tsx";
 import { CreateReport } from "./pages/CreateReport.tsx";
+import FeedCardOpen from "./components/FeedCardOpen.tsx";
 
 const router = createBrowserRouter([
   {
@@ -15,6 +16,10 @@ const router = createBrowserRouter([
   {
     path: "/feed",
     element: <Feed />,
+  },
+  {
+    path: "/feedcard",
+    element: <FeedCardOpen />,
   },
   {
     path: "/report",

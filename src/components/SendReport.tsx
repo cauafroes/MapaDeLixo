@@ -2,7 +2,7 @@ import { useState, ChangeEvent } from "react";
 import Switch from "react-switch";
 import Slider from "@mui/material/Slider";
 import api from "../services/api";
-// import { redirect } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface FormData {
   name: string;
@@ -19,6 +19,8 @@ export default function SendReport() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [red, setRed] = useState(255);
   const [green, setGreen] = useState(200);
+  const navigate = useNavigate();
+
   const [data, setData] = useState<FormData>({
     name: "",
     desc: "",
@@ -34,6 +36,7 @@ export default function SendReport() {
   };
 
   const fetchUserLocation = () => {
+    // const re = /^[0-9.\-\b]+$/;
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -51,7 +54,7 @@ export default function SendReport() {
         }
       );
     } else {
-      console.log("Este navegador não suporta Geolocalização.");
+      alert("Este navegador não suporta Geolocalização.");
     }
   };
 
@@ -68,19 +71,20 @@ export default function SendReport() {
     if (selectedFile) {
       formData.append("image", selectedFile);
     }
-    const response = await api.post("/reports", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data;",
-      },
-    });
-    // .then((response) => {
-    //   console.log(response.data)
-    // });
-    console.log(response.data.type);
-    if(response.data.type) {
-      // return redirect("/");
-      alert("Report criado com sucesso!");
-    }
+
+    await api
+      .post("/reports", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data;",
+        },
+      })
+      .then((response) => {
+        console.log(response.data);
+        if (response.data.type === true) {
+          alert("Lixo reportado com sucesso!");
+          return navigate("/");
+        }
+      });
   };
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -94,36 +98,19 @@ export default function SendReport() {
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = event.target;
-    const re = /^[0-9.\-\b]+$/;
-    if (name === "image") {
-      const fileInput = event.target as HTMLInputElement;
-      const file = fileInput.files && fileInput.files[0];
-      console.log(file);
-      setData((prevData) => ({
-        ...prevData,
-        [name]: file,
-      }));
-    }
-    if (name === "gps_lat" || name === "gps_long") {
-      if (value === "" || re.test(value)) {
-        setData((prevData) => ({
-          ...prevData,
-          [name]: value ? parseFloat(value) : null,
-        }));
-      }
-    } else {
-      setData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
-    }
+
+    setData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
-  const handleSliderChange = (value: any) => {
-    setValue(value);
+  const handleSliderChange = (event: any) => {
+    const tempvalue = event?.target?.value;
+    setValue(tempvalue);
     const normalizedValue = value / 10;
-    const updatedRed = Math.round(normalizedValue + 1 * 200);
-    const updatedGreen = Math.round((1 - normalizedValue) * 200);
+    const updatedRed = Math.round(normalizedValue + 1 * 180);
+    const updatedGreen = Math.round((1 - normalizedValue) * 220);
 
     setRed(updatedRed);
     setGreen(updatedGreen);
