@@ -65,8 +65,12 @@ export default function SendReport() {
     formData.append("name", data.name);
     formData.append("desc", data.desc);
     formData.append("cep", data.cep);
-    formData.append("gps_lat", String(data.gps_lat));
-    formData.append("gps_long", String(data.gps_long));
+    if (data.gps_lat != null) {
+      formData.append("gps_lat", String(data.gps_lat));
+    }
+    if (data.gps_long != null) {
+      formData.append("gps_long", String(data.gps_long));
+    }
     formData.append("trash_amount", String(value));
     if (selectedFile) {
       formData.append("image", selectedFile);

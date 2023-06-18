@@ -13,6 +13,8 @@ interface IObj {
   name: string;
   image: string;
   desc: string;
+  address: string;
+  neighbourhood: string;
   created_at: Date;
   day: string;
   time: string;
@@ -21,9 +23,11 @@ interface IObj {
 const FeedCardOpen = () => {
   const location = useLocation();
   const [data, setData] = useState<IObj | undefined>(undefined);
+  const [comments, setComments] = useState(true);
+  const [description, setDescription] = useState(true);
   const id = location.state?.id || null;
 
-  async function getData(id: number) {
+  async function getData() {
     await api.get(`/reports/${id}`).then((r) => {
       if (r?.data?.type) {
         const dt = new Date(r.data.data.created_at);
@@ -36,7 +40,8 @@ const FeedCardOpen = () => {
   }
 
   useEffect(() => {
-    getData(id);
+    getData();
+    window.scrollTo(0, 0);
   }, []);
 
   console.log(data);
@@ -57,7 +62,7 @@ const FeedCardOpen = () => {
         {data?.name || <Skeleton />}
       </h1>
       <h2 className="px-4 mb-2 text-lg font-bold tracking-tight text-gray-600 text-left">
-        <Skeleton />
+        {data?.address || <Skeleton />}
       </h2>
       <h2 className="px-4 mb-4 text-lg font-bold tracking-tight text-gray-600 text-left">
         {data?.day ? data?.day + " às " + data?.time : <Skeleton />}
@@ -66,62 +71,58 @@ const FeedCardOpen = () => {
         <h3 className="text-lg font-bold tracking-tight text-gray-600 text-left">
           Descrição
         </h3>
-        <button className="p-0 px-2 bg-transparent w-0 font-bold text-green-800">
+        <button
+          className="p-0 px-2 bg-transparent w-0 font-bold text-green-800"
+          onClick={() => {
+            setDescription(!description);
+          }}
+        >
           <BsFillCaretDownFill />
         </button>
       </div>
-      <div className="flex items-center px-4 mb-2 w-full h-auto flex-row border-t border-b border-gray-500 bg-slate-100">
-        <p className="p-2.5 text-lg font-bold tracking-tight text-gray-800 text-left">
-          {data?.desc || <Skeleton />}
-        </p>
-      </div>
+      {description && (
+        <div className="flex items-center px-4 mb-2 w-full h-auto flex-row border-t border-b border-gray-200  bg-slate-100">
+          <p className="p-2.5 text-lg font-bold tracking-tight text-gray-800 text-left">
+            {data?.desc || <Skeleton />}
+          </p>
+        </div>
+      )}
       <div className="flex items-center px-4 mb-2 w-full h-10 flex-row">
         <h3 className="text-lg font-bold tracking-tight text-gray-600 text-left">
           Comentários
         </h3>
-        <button className="p-0 px-2 bg-transparent w-0 font-bold text-green-800">
+        <button
+          className="p-0 px-2 bg-transparent w-0 font-bold text-green-800"
+          onClick={() => {
+            setComments(!comments);
+          }}
+        >
           <BsFillCaretDownFill />
         </button>
       </div>
 
-      <div className="flex flex-col items-center py-2 px-4 mb-2 w-full h-auto border-t border-b border-gray-500 bg-slate-100">
-        <div className="flex px-4 mb-2 w-full h-auto rounded-3xl flex-col bg-white drop-shadow-lg">
-          <div className="p-1 flex w-full h-auto">
-            <div className="px-1 pt-3 h-auto">
-              <BsFillPersonFill className="text-4xl" />
-              <p className="text-sm font-bold tracking-tight text-gray-800">
-                João
+      {comments && (
+        <div className="flex flex-col items-center py-2 px-4 mb-2 w-full h-auto border-t border-b border-gray-200 bg-slate-100">
+          <div className="flex px-4 mb-2 w-full h-auto rounded-3xl flex-col bg-white drop-shadow-lg">
+            <div className="p-1 flex w-full h-auto">
+              <div className="px-1 pt-3 h-auto">
+                <BsFillPersonFill className="text-4xl" />
+                <p className="text-sm font-bold tracking-tight text-gray-800">
+                  Jonas
+                </p>
+              </div>
+              <p className="px-2 pt-2 text-base font-bold tracking-tight text-gray-800">
+                Valeu pela dica, passei hoje por aí e recolhi todas as latinhas,
+                realmente tinha bastante, agora resta a comlurb passar lá pra
+                retirar o lixo.
               </p>
             </div>
-            <p className="px-2 pt-2 text-base font-bold tracking-tight text-gray-800">
-              Passei por aí essa manhã, realmente está bem ruim, mas eu pude
-              observar que tem bastante latinha.
-            </p>
-          </div>
-          <div className="self-end px-1 pb-2 h-auto">
-            <p className="text-sm font-ligth text-gray-800">18/06/2023</p>
-          </div>
-        </div>
-
-        <div className="flex px-4 mb-2 w-full h-auto rounded-3xl flex-col bg-white drop-shadow-lg">
-          <div className="p-1 flex w-full h-auto">
-            <div className="px-1 pt-3 h-auto">
-              <BsFillPersonFill className="text-4xl" />
-              <p className="text-sm font-bold tracking-tight text-gray-800">
-                Jonas
-              </p>
+            <div className="self-end px-1 pb-2 h-auto">
+              <p className="text-sm font-ligth text-gray-800">20/06/2023</p>
             </div>
-            <p className="px-2 pt-2 text-base font-bold tracking-tight text-gray-800">
-              Valeu pela dica, passei hoje por aí e recolhi todas as latinhas,
-              realmente tinha bastante, agora resta a comlurb passar lá pra
-              retirar o lixo.
-            </p>
-          </div>
-          <div className="self-end px-1 pb-2 h-auto">
-            <p className="text-sm font-ligth text-gray-800">20/06/2023</p>
           </div>
         </div>
-      </div>
+      )}
       <div className="w-full h-96 mt-4 mb-2 flex items-center flex-col px-4">
         <h1 className="px-4 mb-6 text-3xl font-bold tracking-tight text-gray-900 text-center">
           Faça um comentário!
