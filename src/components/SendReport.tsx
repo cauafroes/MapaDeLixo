@@ -93,7 +93,9 @@ export default function SendReport() {
         }
         console.log(response.data.success);
         if (!response.data.success) {
-          const error = Object.values(response?.data?.data)[0];
+          const error = Object.values(
+            response?.data?.data as { [key: string]: string }
+          )[0];
           alert(error[0]);
         }
       });
