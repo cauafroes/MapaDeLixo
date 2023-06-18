@@ -19,6 +19,7 @@ export default function SendReport() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [red, setRed] = useState(255);
   const [green, setGreen] = useState(200);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const [data, setData] = useState<FormData>({
@@ -60,6 +61,7 @@ export default function SendReport() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setLoading(true);
     const formData = new FormData();
 
     formData.append("name", data.name);
@@ -83,10 +85,16 @@ export default function SendReport() {
         },
       })
       .then((response) => {
-        console.log(response.data);
+        setLoading(false);
+
         if (response.data.type === true) {
           alert("Lixo reportado com sucesso!");
           return navigate("/");
+        }
+        console.log(response.data.success);
+        if (!response.data.success) {
+          const error = Object.values(response?.data?.data)[0];
+          alert(error[0]);
         }
       });
   };
@@ -234,9 +242,27 @@ export default function SendReport() {
           </label>
           <button
             type="submit"
-            className="bg-blue-500 mt-7 text-white py-4 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+            disabled={loading}
+            className="bg-blue-500 mt-7 text-white py-4 px-4 rounded focus:outline-none text-center align-middle focus:ring-2 focus:ring-blue-500 w-full flex items-center justify-center"
           >
-            Cadastrar
+            {!loading ? (
+              "Cadastrar"
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-9 h-9 animate-spin"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
+                />
+              </svg>
+            )}
           </button>
         </form>
       </div>
