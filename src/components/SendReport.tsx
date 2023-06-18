@@ -66,11 +66,15 @@ export default function SendReport() {
 
     formData.append("name", data.name);
     formData.append("desc", data.desc);
-    formData.append("cep", data.cep);
+    if (data.cep != null && data.cep.length >= 8) {
+      formData.append("cep", data.cep.slice(0, 5) + "-" + data.cep.slice(5));
+    }
     if (data.gps_lat != null) {
+      data.gps_lat = parseFloat(data.gps_lat.toFixed(8));
       formData.append("gps_lat", String(data.gps_lat));
     }
     if (data.gps_long != null) {
+      data.gps_long = parseFloat(data.gps_long.toFixed(8));
       formData.append("gps_long", String(data.gps_long));
     }
     formData.append("trash_amount", String(value));
@@ -112,11 +116,15 @@ export default function SendReport() {
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = event.target;
-
+    let processedValue = value;
+    if (name == "cep") {
+      processedValue = processedValue.replace(/[^0-9]/g, "");
+    }
     setData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: processedValue,
     }));
+    console.log(data.cep);
   };
 
   const handleSliderChange = (event: any) => {
@@ -226,7 +234,8 @@ export default function SendReport() {
               <input
                 name="cep"
                 value={data.cep || ""}
-                placeholder="12345-678"
+                maxLength={9}
+                placeholder="12345678"
                 onChange={handleChange}
                 className="border border-gray-300 rounded px-2 py-1 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
               />

@@ -73,7 +73,7 @@ const FeedCardOpen = () => {
           Descrição
         </h3>
         <button
-          className="p-0 px-2 bg-transparent w-0 font-bold text-gray-500"
+          className="ml-2 bg-transparent font-bold text-gray-500 "
           onClick={() => {
             setDescription(!description);
           }}
@@ -93,7 +93,7 @@ const FeedCardOpen = () => {
           Comentários
         </h3>
         <button
-          className="p-0 px-2 bg-transparent w-0 font-bold text-gray-500"
+          className="ml-2 bg-transparent font-bold text-gray-500"
           onClick={() => {
             setComments(!comments);
           }}
