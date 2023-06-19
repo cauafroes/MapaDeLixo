@@ -41,7 +41,10 @@ const FeedCard = ({ obj }: props) => {
           <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 text-left">
             {obj?.name || <Skeleton width={290} />}
           </h5>
-          <p className="mb-3 font-normal text-gray-700 dark:text-gray-400 text-left">
+          <p
+            className="mb-3 font-normal text-gray-700 dark:text-gray-400 text-left"
+            style={{ overflowWrap: "break-word" }}
+          >
             {obj?.desc || <Skeleton width={290} count={3} />}
           </p>
         </div>
