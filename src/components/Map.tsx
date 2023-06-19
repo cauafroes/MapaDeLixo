@@ -8,17 +8,9 @@ type Place = {
   id: string;
   gps_lat: number;
   gps_long: number;
+  trash_amount: number;
 };
 
-const marketIcon = new L.Icon({
-  iconUrl:
-    "https://th.bing.com/th/id/R.c1d171888c0f59f4f45e2569406d938e?rik=uCyFb1bVsv9Yvg&pid=ImgRaw&r=0",
-  iconSize: [40, 40],
-  iconAnchor: [20, 20],
-  popupAnchor: [0, -40],
-});
-
-// const Map = ({ places }: MapProps) => {
 const Map = () => {
   const [arr, setArr] = useState<Place[]>([]);
 
@@ -35,6 +27,35 @@ const Map = () => {
     getFeed();
   }, []);
 
+  const getMarkerIcon = (trash_amount: string) => {
+    const num = parseInt(trash_amount);
+    const icons = [
+      "nivel0",
+      "nivel1",
+      "nivel2",
+      "nivel3",
+      "nivel4",
+      "nivel5",
+      "nivel6",
+      "nivel7",
+      "nivel8",
+      "nivel9",
+      "nivel10",
+    ];
+
+    let iconUrl = icons.find((_, index) => index === num) || null;
+    iconUrl = "https://mapalixo.froesmhs.com/" + iconUrl + ".svg";
+    const icon = L.icon({
+      iconUrl,
+      iconSize: [(40 * num) / 7, (40 * num) / 7],
+      // iconSize: [40, 40],
+      iconAnchor: [20, 20],
+      popupAnchor: [0, -40],
+    });
+
+    return icon;
+  };
+
   return (
     <div className="relative h-screen">
       <MapContainer
@@ -46,11 +67,12 @@ const Map = () => {
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
         {arr?.map((arr) => {
+          const markerIcon = getMarkerIcon(arr.trash_amount.toString());
           return (
             <Marker
               key={`place-${arr.id}`}
               position={[arr.gps_lat, arr.gps_long]}
-              icon={marketIcon}
+              icon={markerIcon}
             />
           );
         })}
