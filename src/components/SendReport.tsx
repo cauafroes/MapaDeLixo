@@ -1,8 +1,8 @@
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, useEffect } from "react";
 import Switch from "react-switch";
 import Slider from "@mui/material/Slider";
 import api from "../services/api";
-// import { redirect } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface FormData {
   name: string;
@@ -19,6 +19,10 @@ export default function SendReport() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [red, setRed] = useState(255);
   const [green, setGreen] = useState(200);
+  const [loading, setLoading] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const [data, setData] = useState<FormData>({
     name: "",
     desc: "",
@@ -34,6 +38,7 @@ export default function SendReport() {
   };
 
   const fetchUserLocation = () => {
+    // const re = /^[0-9.\-\b]+$/;
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -51,36 +56,61 @@ export default function SendReport() {
         }
       );
     } else {
-      console.log("Este navegador não suporta Geolocalização.");
+      alert("Este navegador não suporta Geolocalização.");
     }
   };
 
+  const { imageFile } = location.state || { imageFile: null };
+
+  useEffect(() => {
+    if (imageFile != null) {
+      setSelectedFile(imageFile);
+    }
+  }, []);
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setLoading(true);
     const formData = new FormData();
 
     formData.append("name", data.name);
     formData.append("desc", data.desc);
-    formData.append("cep", data.cep);
-    formData.append("gps_lat", String(data.gps_lat));
-    formData.append("gps_long", String(data.gps_long));
+    if (data.cep != null && data.cep.length >= 8 && !automaticGPS) {
+      formData.append("cep", data.cep.slice(0, 5) + "-" + data.cep.slice(5));
+    }
+    if (data.gps_lat != null && automaticGPS) {
+      data.gps_lat = parseFloat(data.gps_lat.toFixed(8));
+      formData.append("gps_lat", String(data.gps_lat));
+    }
+    if (data.gps_long != null && automaticGPS) {
+      data.gps_long = parseFloat(data.gps_long.toFixed(8));
+      formData.append("gps_long", String(data.gps_long));
+    }
     formData.append("trash_amount", String(value));
     if (selectedFile) {
       formData.append("image", selectedFile);
     }
-    const response = await api.post("/reports", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data;",
-      },
-    });
-    // .then((response) => {
-    //   console.log(response.data)
-    // });
-    console.log(response.data.type);
-    if(response.data.type) {
-      // return redirect("/");
-      alert("Report criado com sucesso!");
-    }
+
+    await api
+      .post("/reports", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data;",
+        },
+      })
+      .then((response) => {
+        setLoading(false);
+
+        if (response.data.type === true) {
+          alert("Lixo reportado com sucesso!");
+          return navigate("/");
+        }
+        if (!response.data.success) {
+          const error = Object.values(
+            response?.data?.data as { [key: string]: string }
+          )[0];
+          alert(error[0]);
+        }
+      });
   };
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -94,36 +124,22 @@ export default function SendReport() {
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = event.target;
-    const re = /^[0-9.\-\b]+$/;
-    if (name === "image") {
-      const fileInput = event.target as HTMLInputElement;
-      const file = fileInput.files && fileInput.files[0];
-      console.log(file);
-      setData((prevData) => ({
-        ...prevData,
-        [name]: file,
-      }));
+    let processedValue = value;
+    if (name == "cep") {
+      processedValue = processedValue.replace(/[^0-9]/g, "");
     }
-    if (name === "gps_lat" || name === "gps_long") {
-      if (value === "" || re.test(value)) {
-        setData((prevData) => ({
-          ...prevData,
-          [name]: value ? parseFloat(value) : null,
-        }));
-      }
-    } else {
-      setData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
-    }
+    setData((prevData) => ({
+      ...prevData,
+      [name]: processedValue,
+    }));
   };
 
-  const handleSliderChange = (value: any) => {
-    setValue(value);
+  const handleSliderChange = (event: any) => {
+    const tempvalue = event?.target?.value;
+    setValue(tempvalue);
     const normalizedValue = value / 10;
-    const updatedRed = Math.round(normalizedValue + 1 * 200);
-    const updatedGreen = Math.round((1 - normalizedValue) * 200);
+    const updatedRed = Math.round(normalizedValue + 1 * 180);
+    const updatedGreen = Math.round((1 - normalizedValue) * 220);
 
     setRed(updatedRed);
     setGreen(updatedGreen);
@@ -134,14 +150,15 @@ export default function SendReport() {
       <div className="max-w-md p-7 mb-28 mx-auto">
         <h1 className="text-2xl font-bold">Reportar lixo</h1>
         <form onSubmit={handleSubmit} className="leading-9 mt-6">
-          <label className="block mb-1 pt-1">
-            Selecione uma imagem:
-            <input
-              type="file"
-              accept="image/*"
-              name="image"
-              onChange={handleFileChange}
-              className="
+          {selectedFile == null ? (
+            <label className="block mb-1 pt-1">
+              Selecione uma imagem:
+              <input
+                type="file"
+                accept="image/*"
+                name="image"
+                onChange={handleFileChange}
+                className="
                 file:bg-gradient-to-b file:from-blue-400 file:to-blue-500
                 file:text-xs
                 file:px-6 file:py-3 file:m-5
@@ -151,8 +168,14 @@ export default function SendReport() {
 
                 w-full px-1 mt-3 text-xs text-gray bg-blue-300 rounded-xl text-white pr-4
               "
-            />
-          </label>
+              />
+            </label>
+          ) : (
+            <div className="flex justify-center items-center bg-blue-400 rounded-md text-white">
+              <p>Foto selecionada!</p>
+            </div>
+          )}
+
           <label className="block mb-2">
             Nome:
             <input
@@ -225,7 +248,8 @@ export default function SendReport() {
               <input
                 name="cep"
                 value={data.cep || ""}
-                placeholder="12345-678"
+                maxLength={8}
+                placeholder="12345678"
                 onChange={handleChange}
                 className="border border-gray-300 rounded px-2 py-1 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -243,9 +267,27 @@ export default function SendReport() {
           </label>
           <button
             type="submit"
-            className="bg-blue-500 mt-7 text-white py-4 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+            disabled={loading}
+            className="bg-blue-500 mt-7 text-white py-4 px-4 rounded focus:outline-none text-center align-middle focus:ring-2 focus:ring-blue-500 w-full flex items-center justify-center"
           >
-            Cadastrar
+            {!loading ? (
+              "Cadastrar"
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-9 h-9 animate-spin"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
+                />
+              </svg>
+            )}
           </button>
         </form>
       </div>

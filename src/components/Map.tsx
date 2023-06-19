@@ -1,33 +1,52 @@
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import "../styles/map.css";
 import L from "leaflet";
-
-import nivel0 from '../../public/nivel0.png';
-import nivel1 from '../../public/nivel1.png';
-import nivel2 from '../../public/nivel2.png';
-import nivel3 from '../../public/nivel3.png';
-import nivel4 from '../../public/nivel4.png';
-import nivel5 from '../../public/nivel5.png';
-import nivel6 from '../../public/nivel6.png';
-import nivel7 from '../../public/nivel7.png';
-import nivel8 from '../../public/nivel8.png';
-import nivel9 from '../../public/nivel9.png';
-import nivel10 from '../../public/nivel10.png';
+import nivel0 from "../../public/nivel0.png";
+import nivel1 from "../../public/nivel1.png";
+import nivel2 from "../../public/nivel2.png";
+import nivel3 from "../../public/nivel3.png";
+import nivel4 from "../../public/nivel4.png";
+import nivel5 from "../../public/nivel5.png";
+import nivel6 from "../../public/nivel6.png";
+import nivel7 from "../../public/nivel7.png";
+import nivel8 from "../../public/nivel8.png";
+import nivel9 from "../../public/nivel9.png";
+import nivel10 from "../../public/nivel10.png";
+import api from "../services/api";
+import { useEffect, useState } from "react";
 
 type Place = {
   id: string;
-  location: {
-    latitude: number;
-    longitude: number;
-  };
-  qtd_de_lixo: number;
+  gps_lat: number;
+  gps_long: number;
+  trash_amount: number;
 };
 
-export type MapProps = {
-  places?: Place[];
-};
+const marketIcon = new L.Icon({
+  iconUrl:
+    "https://th.bing.com/th/id/R.c1d171888c0f59f4f45e2569406d938e?rik=uCyFb1bVsv9Yvg&pid=ImgRaw&r=0",
+  iconSize: [40, 40],
+  iconAnchor: [20, 20],
+  popupAnchor: [0, -40],
+});
 
-const Map = ({ places }: MapProps) => {
+// const Map = ({ places }: MapProps) => {
+const Map = () => {
+  const [arr, setArr] = useState<Place[]>([]);
+
+  async function getFeed() {
+    await api
+      .get("/getmapcoords")
+      .then((res) => {
+        setArr(res.data.data);
+      })
+      .catch((e) => console.log(e));
+  }
+
+  useEffect(() => {
+    getFeed();
+  }, []);
+
   const getMarkerIcon = (qtd_de_lixo: number) => {
     let iconUrl = "";
 
@@ -87,15 +106,15 @@ const Map = ({ places }: MapProps) => {
       >
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
-        {places?.map(({ id, location, qtd_de_lixo }) => {
-          const { latitude, longitude } = location;
-          const markerIcon = getMarkerIcon(qtd_de_lixo);
-
-          if (markerIcon) {
-            return <Marker key={`place-${id}`} position={[latitude, longitude]} icon={markerIcon} />;
-          }
-
-          return null; // Não exibe o marcador se não houver ícone correspondente
+        {arr?.map((arr) => {
+          const markerIcon = getMarkerIcon(arr.trash_amount);
+          return (
+            <Marker
+              key={`place-${arr.id}`}
+              position={[arr.gps_lat, arr.gps_long]}
+              icon={marketIcon}
+            />
+          );
         })}
       </MapContainer>
     </div>

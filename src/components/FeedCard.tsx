@@ -1,6 +1,8 @@
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { Link } from "react-router-dom";
 export interface IObj {
+  id: number;
   name: string;
   image: string;
   desc: string;
@@ -13,8 +15,9 @@ interface props {
 const FeedCard = ({ obj }: props) => {
   return (
     <>
-      <a
-        href="#"
+      <Link
+        to="/feedcard"
+        state={{ id: obj?.id }}
         className="w-10/12 m-6 items-center bg-white border border-gray-200 rounded-xl shadow-xl md:flex-row"
       >
         <div className="flex-shrink-0">
@@ -38,11 +41,14 @@ const FeedCard = ({ obj }: props) => {
           <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 text-left">
             {obj?.name || <Skeleton width={290} />}
           </h5>
-          <p className="mb-3 font-normal text-gray-700 dark:text-gray-400 text-left">
+          <p
+            className="mb-3 font-normal text-gray-700 dark:text-gray-400 text-left"
+            style={{ overflowWrap: "break-word" }}
+          >
             {obj?.desc || <Skeleton width={290} count={3} />}
           </p>
         </div>
-      </a>
+      </Link>
     </>
   );
 };

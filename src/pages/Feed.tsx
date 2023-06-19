@@ -25,15 +25,17 @@ const Feed = () => {
   return (
     <>
       <div className="flex flex-col items-center justify-center mb-32">
-        {arr.length > 1 && !loading ? 
-        arr.map((obj: IObj, index: number) => (
-              <FeedCard key={index} obj={obj} />
-            ))
-          : <>
-          <FeedCard />
-          <FeedCard />
-          <FeedCard />
-          </> }
+        {arr.length >= 1 && !loading ? (
+          arr.map((obj: IObj, index: number) => (
+            <FeedCard key={index} obj={obj} />
+          ))
+        ) : (
+          <>
+            <FeedCard />
+            <FeedCard />
+            <FeedCard />
+          </>
+        )}
 
         <Navbar />
       </div>
