@@ -234,7 +234,7 @@ export default function SendReport() {
               <input
                 name="cep"
                 value={data.cep || ""}
-                maxLength={9}
+                maxLength={8}
                 placeholder="12345678"
                 onChange={handleChange}
                 className="border border-gray-300 rounded px-2 py-1 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
