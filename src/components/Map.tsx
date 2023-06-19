@@ -2,7 +2,7 @@ import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import "../styles/map.css";
 import L from "leaflet";
 
-import nivel1 from '../../public/nivel1.png';
+import nivel1 from '../../public/nivel1.svg';
 
 type Place = {
   id: string;
