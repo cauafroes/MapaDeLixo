@@ -44,7 +44,7 @@ const Map = () => {
     ];
 
     let iconUrl = icons.find((_, index) => index === num) || null;
-    iconUrl = "../../public/" + iconUrl + ".svg";
+    iconUrl = "https://mapalixo.froesmhs.com/" + iconUrl + ".svg";
     const icon = L.icon({
       iconUrl,
       iconSize: [(40 * num) / 7, (40 * num) / 7],
