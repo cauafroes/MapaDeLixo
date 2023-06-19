@@ -95,7 +95,6 @@ export default function SendReport() {
           alert("Lixo reportado com sucesso!");
           return navigate("/");
         }
-        console.log(response.data.success);
         if (!response.data.success) {
           const error = Object.values(
             response?.data?.data as { [key: string]: string }
@@ -124,7 +123,6 @@ export default function SendReport() {
       ...prevData,
       [name]: processedValue,
     }));
-    console.log(data.cep);
   };
 
   const handleSliderChange = (event: any) => {

@@ -7,6 +7,7 @@ import "./index.css";
 import Feed from "./pages/Feed.tsx";
 import { CreateReport } from "./pages/CreateReport.tsx";
 import FeedCardOpen from "./components/FeedCardOpen.tsx";
+import CameraView from "./pages/CameraView.tsx";
 
 const router = createBrowserRouter([
   {
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
   {
     path: "/report",
     element: <CreateReport />,
+  },
+  {
+    path: "/camera",
+    element: <CameraView />,
   },
 ]);
 
