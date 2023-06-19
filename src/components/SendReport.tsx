@@ -66,14 +66,14 @@ export default function SendReport() {
 
     formData.append("name", data.name);
     formData.append("desc", data.desc);
-    if (data.cep != null && data.cep.length >= 8) {
+    if (data.cep != null && data.cep.length >= 8 && !automaticGPS) {
       formData.append("cep", data.cep.slice(0, 5) + "-" + data.cep.slice(5));
     }
-    if (data.gps_lat != null) {
+    if (data.gps_lat != null && automaticGPS) {
       data.gps_lat = parseFloat(data.gps_lat.toFixed(8));
       formData.append("gps_lat", String(data.gps_lat));
     }
-    if (data.gps_long != null) {
+    if (data.gps_long != null && automaticGPS) {
       data.gps_long = parseFloat(data.gps_long.toFixed(8));
       formData.append("gps_long", String(data.gps_long));
     }
