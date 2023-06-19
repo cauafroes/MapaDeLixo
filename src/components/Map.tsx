@@ -1,6 +1,10 @@
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import "../styles/map.css";
-import L from "leaflet"
+import L from "leaflet";
+
+import nivel1 from '../../public/nivel1.png';
+import nivel2 from '../../public/nivel2.png';
+import nivel3 from '../../public/nivel3.png';
 
 type Place = {
   id: string;
@@ -8,20 +12,39 @@ type Place = {
     latitude: number;
     longitude: number;
   };
+  nivel: number; // Propriedade "nivel" para determinar o ícone
 };
 
 export type MapProps = {
   places?: Place[];
 };
 
-const marketIcon = new L.Icon({
-  iconUrl: 'https://th.bing.com/th/id/R.c1d171888c0f59f4f45e2569406d938e?rik=uCyFb1bVsv9Yvg&pid=ImgRaw&r=0',
-  iconSize: [40, 40],
-  iconAnchor: [20,20],
-  popupAnchor: [0, -40]
-})
-
 const Map = ({ places }: MapProps) => {
+  const getMarkerIcon = (nivel: number) => {
+    if (nivel === 1) {
+      return L.icon({
+        iconUrl: nivel1,
+        iconSize: [40, 40],
+        iconAnchor: [20, 20],
+        popupAnchor: [0, -40],
+      });
+    } else if (nivel === 2) {
+      return L.icon({
+        iconUrl: nivel2,
+        iconSize: [40, 40],
+        iconAnchor: [20, 20],
+        popupAnchor: [0, -40],
+      });
+    } else if (nivel === 3) {
+      return L.icon({
+        iconUrl: nivel3,
+        iconSize: [40, 40],
+        iconAnchor: [20, 20],
+        popupAnchor: [0, -40],
+      });
+    }
+  };
+
   return (
     <div className="relative h-screen">
       <MapContainer
@@ -32,10 +55,15 @@ const Map = ({ places }: MapProps) => {
       >
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
-        {places?.map(({ id, location }) => {
+        {places?.map(({ id, location, nivel }) => {
           const { latitude, longitude } = location;
+          const markerIcon = getMarkerIcon(nivel);
 
-          return <Marker key={`place-${id}`} position={[latitude, longitude]} icon={marketIcon} />;
+          if (markerIcon) {
+            return <Marker key={`place-${id}`} position={[latitude, longitude]} icon={markerIcon} />;
+          }
+
+          return null; // Não exibe o marcador se não houver ícone correspondente
         })}
       </MapContainer>
     </div>
@@ -43,4 +71,3 @@ const Map = ({ places }: MapProps) => {
 };
 
 export default Map;
-
