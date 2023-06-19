@@ -1,8 +1,8 @@
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, useEffect } from "react";
 import Switch from "react-switch";
 import Slider from "@mui/material/Slider";
 import api from "../services/api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface FormData {
   name: string;
@@ -20,6 +20,7 @@ export default function SendReport() {
   const [red, setRed] = useState(255);
   const [green, setGreen] = useState(200);
   const [loading, setLoading] = useState(false);
+  const location = useLocation();
   const navigate = useNavigate();
 
   const [data, setData] = useState<FormData>({
@@ -58,6 +59,14 @@ export default function SendReport() {
       alert("Este navegador não suporta Geolocalização.");
     }
   };
+
+  const { imageFile } = location.state || { imageFile: null };
+
+  useEffect(() => {
+    if (imageFile != null) {
+      setSelectedFile(imageFile);
+    }
+  }, []);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -141,14 +150,15 @@ export default function SendReport() {
       <div className="max-w-md p-7 mb-28 mx-auto">
         <h1 className="text-2xl font-bold">Reportar lixo</h1>
         <form onSubmit={handleSubmit} className="leading-9 mt-6">
-          <label className="block mb-1 pt-1">
-            Selecione uma imagem:
-            <input
-              type="file"
-              accept="image/*"
-              name="image"
-              onChange={handleFileChange}
-              className="
+          {selectedFile == null ? (
+            <label className="block mb-1 pt-1">
+              Selecione uma imagem:
+              <input
+                type="file"
+                accept="image/*"
+                name="image"
+                onChange={handleFileChange}
+                className="
                 file:bg-gradient-to-b file:from-blue-400 file:to-blue-500
                 file:text-xs
                 file:px-6 file:py-3 file:m-5
@@ -158,8 +168,14 @@ export default function SendReport() {
 
                 w-full px-1 mt-3 text-xs text-gray bg-blue-300 rounded-xl text-white pr-4
               "
-            />
-          </label>
+              />
+            </label>
+          ) : (
+            <div className="flex justify-center items-center bg-blue-400 rounded-md text-white">
+              <p>Foto selecionada!</p>
+            </div>
+          )}
+
           <label className="block mb-2">
             Nome:
             <input

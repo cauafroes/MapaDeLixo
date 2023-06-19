@@ -35,9 +35,6 @@ const Map = () => {
     getFeed();
   }, []);
 
-  arr.map((a) => {
-    console.log(a);
-  });
   return (
     <div className="relative h-screen">
       <MapContainer
