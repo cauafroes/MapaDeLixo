@@ -29,31 +29,34 @@ const Map = () => {
 
   const getMarkerIcon = (trash_amount: string) => {
     const num = parseInt(trash_amount);
-    const icons = [
-      "nivel0",
-      "nivel1",
-      "nivel2",
-      "nivel3",
-      "nivel4",
-      "nivel5",
-      "nivel6",
-      "nivel7",
-      "nivel8",
-      "nivel9",
-      "nivel10",
-    ];
 
-    let iconUrl = icons.find((_, index) => index === num) || null;
-    iconUrl = "https://mapalixo.froesmhs.com/" + iconUrl + ".svg";
-    const icon = L.icon({
-      iconUrl,
-      iconSize: [(40 * num) / 7, (40 * num) / 7],
-      // iconSize: [40, 40],
-      iconAnchor: [20, 20],
-      popupAnchor: [0, -40],
+    const max = 10;
+    const hue = 120 - Math.min(num, max) * 12; // 120 (green) ➝ 0 (red)
+    const bgColor = `hsl(${hue}, 80%, 50%)`;
+
+    const iconSize = Math.max(20, (60 * num) / 7); // Minimum size 20
+    // const bgColor = `hsl(${Math.min(num * 12, 120)}, 80%, 50%)`; // Changes color from green to red-ish
+
+    const icon = L.divIcon({
+      className: '', // Remove default class
+      html: `<div style="
+        width: ${iconSize}px;
+        height: ${iconSize}px;
+        background-color: ${bgColor};
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        color: white;
+        border: 2px solid white;
+      ">${num}</div>`,
+      iconSize: [iconSize, iconSize],
+      iconAnchor: [iconSize / 2, iconSize / 2],
+      popupAnchor: [0, -iconSize / 2],
     });
 
-    return icon;
+    return icon
   };
 
   return (
